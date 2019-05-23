@@ -1,6 +1,63 @@
 ---
-- name: Download vagrant
-  get_url: url={{ vagrant_url_rpm }} dest={{vagrant_tmp_rpm}}
+- name: Check if Oracle virtualbox repo is already configured.
+  stat:
+    path: "{{ virtualbox_repofile_path }}"
+  register: virtualbox_repofile_result
+  when:
+    - vagrant_virtualbox_install
 
-- name: Install vagrant for RedHat OS family
-  yum: name={{vagrant_tmp_rpm}}
+- name: Download Oracle virtualbox RHEL repo file.
+  get_url:
+    url: "{{ virtualbox_repofile_rhel_url }}"
+    dest: "{{ virtualbox_repofile_path }}"
+  when:
+    - vagrant_virtualbox_install
+    - not virtualbox_repofile_result.stat.exists
+    - ansible_os_family == 'RedHat'
+    - ansible_distribution != 'Fedora'
+
+- name: Download Oracle virtualbox Fedora repo file.
+  get_url:
+    url: "{{ virtualbox_repofile_fedora_url }}"
+    dest: "{{ virtualbox_repofile_path }}"
+  when:
+    - vagrant_virtualbox_install
+    - not virtualbox_repofile_result.stat.exists
+    - ansible_distribution == 'Fedora'
+
+- name: Import Oracle virtualbox GPG key.
+  rpm_key:
+    key: "{{ virtualbox_repo_gpg_key_url }}"
+    state: present
+  when:
+    - vagrant_virtualbox_install
+    - not virtualbox_repofile_result.stat.exists
+  ignore_errors: "{{ ansible_check_mode }}"
+
+- name: Install package dependencies for virtualbox.
+  yum:
+    name: "{{ virtualbox_rhel_dependencies }}"
+    # enablerepo: epel
+  when:
+    - vagrant_virtualbox_install
+
+- name: Install Oracle virtualbox.
+  yum:
+    name: "{{ virtualbox_rhel_package }}"
+    enablerepo: virtualbox
+  when:
+    - vagrant_virtualbox_install
+
+# - name: Download virtualbox
+#   get_url: url={{ vagrant_virtualbox_url_rpm }} dest={{vagrant_virtualbox_tmp_rpm}}
+#   when: ( vagrant_virtualbox_install )
+
+# - name: Install virtualbox for RedHat OS family
+#   yum: name={{vagrant_virtualbox_tmp_rpm}}
+#   when: ( vagrant_virtualbox_install )
+
+# - name: Download vagrant
+#   get_url: url={{ vagrant_url_rpm }} dest={{vagrant_tmp_rpm}}
+
+# - name: Install vagrant for RedHat OS family
+#   yum: name={{vagrant_tmp_rpm}}

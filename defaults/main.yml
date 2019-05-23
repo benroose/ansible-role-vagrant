@@ -3,5 +3,15 @@ vagrant_version: "1.9.1"
 vagrant_tmp_dir: "/opt/ansible_downloads/"
 vagrant_tmp_deb: "{{vagrant_tmp_dir}}/vagrant_{{vagrant_version}}.deb"
 vagrant_tmp_rpm: "{{vagrant_tmp_dir}}/vagrant_{{vagrant_version}}.rpm"
+
 vagrant_virtualbox_install: True
 vagrant_virtualbox_ver: "virtualbox"
+# vagrant_virtualbox_version: "6.0.6"
+vagrant_virtualbox_tmp_rpm: "{{vagrant_tmp_dir}}/virtualbox_install.rpm"
+virtualbox_url_rhel_rpm: "https://download.virtualbox.org/virtualbox/6.0.6/VirtualBox-6.0-6.0.6_130049_el7-1.x86_64.rpm"
+
+virtualbox_rhel_package: "VirtualBox-6.0"
+virtualbox_repofile_rhel_url: "http://download.virtualbox.org/virtualbox/rpm/rhel/virtualbox.repo"
+virtualbox_repofile_fedora_url: "https://download.virtualbox.org/virtualbox/rpm/fedora/virtualbox.repo"
+virtualbox_repo_gpg_key_url: "https://www.virtualbox.org/download/oracle_vbox.asc"
+virtualbox_repofile_path: "/etc/yum.repos.d/virtualbox.repo"
